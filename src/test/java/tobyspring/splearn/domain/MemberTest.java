@@ -3,7 +3,6 @@ package tobyspring.splearn.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -27,7 +26,7 @@ class MemberTest {
             }
         };
 
-        member = Member.create("test@gmail.com", "SeungIL", "secret", passwordEncoder);
+        member = Member.create(new MemberCreateRequest("test@gmail.com", "SeungIL", "secret"), passwordEncoder);
     }
 
     @Test
@@ -37,7 +36,7 @@ class MemberTest {
 
     @Test
     void constructorNullCheck() {
-        assertThatThrownBy(() -> Member.create(null, "SeungIL", "secret", passwordEncoder))
+        assertThatThrownBy(() -> Member.create(new MemberCreateRequest(null, "SeungIL", "secret"), passwordEncoder))
                 .isInstanceOf(NullPointerException.class);
     }
 
@@ -92,5 +91,18 @@ class MemberTest {
         member.changePassword("newSecret", passwordEncoder);
 
         assertThat(member.verifyPassword("newSecret", passwordEncoder)).isTrue();
+    }
+
+    @Test
+    void isActive() {
+        assertThat(member.isActive()).isFalse();
+
+        member.activate();
+
+        assertThat(member.isActive()).isTrue();
+
+        member.deactivate();
+
+        assertThat(member.isActive()).isFalse();
     }
 }
