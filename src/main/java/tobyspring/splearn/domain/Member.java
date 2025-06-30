@@ -3,8 +3,6 @@ package tobyspring.splearn.domain;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.regex.Pattern;
-
 import static java.util.Objects.requireNonNull;
 import static org.springframework.util.Assert.state;
 
