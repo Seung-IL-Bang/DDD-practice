@@ -26,17 +26,17 @@ class MemberTest {
             }
         };
 
-        member = Member.create(new MemberCreateRequest("test@gmail.com", "SeungIL", "secret"), passwordEncoder);
+        member = Member.register(new MemberRegisterRequest("test@gmail.com", "SeungIL", "secret"), passwordEncoder);
     }
 
     @Test
-    void createMember() {
+    void registerMember() {
         assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
     }
 
     @Test
     void constructorNullCheck() {
-        assertThatThrownBy(() -> Member.create(new MemberCreateRequest(null, "SeungIL", "secret"), passwordEncoder))
+        assertThatThrownBy(() -> Member.register(new MemberRegisterRequest(null, "SeungIL", "secret"), passwordEncoder))
                 .isInstanceOf(NullPointerException.class);
     }
 
@@ -109,7 +109,7 @@ class MemberTest {
     @Test
     void invalidEmail() {
         assertThatThrownBy(()
-                -> Member.create(new MemberCreateRequest("invalid-email", "SeungIL", "secret"), passwordEncoder))
+                -> Member.register(new MemberRegisterRequest("invalid-email", "SeungIL", "secret"), passwordEncoder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
