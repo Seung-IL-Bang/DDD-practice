@@ -1,10 +1,10 @@
 package tobyspring.splearn.application;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+import tobyspring.splearn.application.provided.MemberFinder;
 import tobyspring.splearn.application.provided.MemberRegister;
 import tobyspring.splearn.application.required.EmailSender;
 import tobyspring.splearn.application.required.MemberRepository;
@@ -14,7 +14,7 @@ import tobyspring.splearn.domain.*;
 @Transactional
 @Validated
 @RequiredArgsConstructor
-public class MemberService implements MemberRegister {
+public class MemberService implements MemberRegister, MemberFinder {
 
     private final MemberRepository memberRepository;
     private final EmailSender emailSender;
@@ -31,6 +31,22 @@ public class MemberService implements MemberRegister {
         sendWelcomeEmail(member);
 
         return member;
+    }
+
+    @Override
+    public Member activate(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다. ID: " + memberId));
+
+        member.activate();
+
+        return memberRepository.save(member);
+    }
+
+    @Override
+    public Member find(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다. ID: " + memberId));
     }
 
     private void checkDuplicateEmail(MemberRegisterRequest registerRequest) {
