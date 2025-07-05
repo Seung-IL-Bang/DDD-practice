@@ -49,13 +49,13 @@ record MemberRegisterTest(MemberRegister memberRegister, EntityManager entityMan
 
     @Test
     void memberRegisterRequestFail() {
-        extracted(new MemberRegisterRequest("test@gmail.com", "name", "correct_secret"));
-        extracted(new MemberRegisterRequest("test@gmail.com", "nickname", "secret"));
-        extracted(new MemberRegisterRequest("test@gmail.com", "nickname----------------------", "correct_secret"));
-        extracted(new MemberRegisterRequest("testgmail.com", "name", "secret"));
+        checkValidation(new MemberRegisterRequest("test@gmail.com", "name", "correct_secret"));
+        checkValidation(new MemberRegisterRequest("test@gmail.com", "nickname", "secret"));
+        checkValidation(new MemberRegisterRequest("test@gmail.com", "nickname----------------------", "correct_secret"));
+        checkValidation(new MemberRegisterRequest("testgmail.com", "name", "secret"));
     }
 
-    private void extracted(MemberRegisterRequest invalid) {
+    private void checkValidation(MemberRegisterRequest invalid) {
         assertThatThrownBy(() -> memberRegister.register(invalid))
                 .isInstanceOf(ConstraintViolationException.class);
     }
