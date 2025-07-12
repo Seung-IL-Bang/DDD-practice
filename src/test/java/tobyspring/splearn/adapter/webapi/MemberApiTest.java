@@ -2,8 +2,10 @@ package tobyspring.splearn.adapter.webapi;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
@@ -18,18 +20,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest(controllers = MemberApi.class)
+@RequiredArgsConstructor
 class MemberApiTest {
+    final MockMvcTester mvcTester;
+    final ObjectMapper objectMapper;
 
     @MockitoBean
     MemberRegister memberRegister;
-
-    private final MockMvcTester mvcTester;
-    private final ObjectMapper objectMapper;
-
-    public MemberApiTest(MockMvcTester mvcTester, ObjectMapper objectMapper) {
-        this.mvcTester = mvcTester;
-        this.objectMapper = objectMapper;
-    }
 
     @Test
     void register() throws JsonProcessingException {
@@ -47,5 +44,16 @@ class MemberApiTest {
                 .extractingPath("$.memberId").asNumber().isEqualTo(1);
 
         verify(memberRegister).register(request);
+    }
+
+    @Test
+    void registerFail() throws JsonProcessingException {
+        MemberRegisterRequest request = MemberFixture.createMemberRegisterRequest("invalid-email");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        assertThat(mvcTester.post().uri("/api/members")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .hasStatus(HttpStatus.BAD_REQUEST);
     }
 }
