@@ -3,7 +3,7 @@ package tobyspring.learningtest.archunit.application;
 import tobyspring.learningtest.archunit.adapter.MyAdapter;
 
 public class MyService {
-    MyService2 myService2;
+//    MyService2 myService2;
 
 //    MyAdapter myAdapter;
 }
